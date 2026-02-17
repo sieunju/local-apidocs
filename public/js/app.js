@@ -98,6 +98,7 @@
         configHeaders = (data.headers || []).filter((h) => h.key);
       }
     } catch (_) {}
+
   }
 
   // ── API 목록 로드 ─────────────────────────────────
@@ -327,12 +328,17 @@
     // base url
     document.getElementById('baseUrl').value = targetHost || `http://localhost:${serverPort}`;
 
-    // headers: config 공통 헤더 + endpoint 헤더 병합 (endpoint 헤더가 우선)
-    const epHeaderKeys = (ep.headers || []).map((h) => h.key.toLowerCase());
-    const mergedHeaders = [
-      ...configHeaders.filter((h) => !epHeaderKeys.includes(h.key.toLowerCase())),
-      ...(ep.headers || []),
-    ];
+    // headers: endpoint 헤더 중 config와 같은 key가 있으면 config 값으로 자동 교체
+    // endpoint에 없는 config 헤더도 추가
+    const mergedHeaders = (ep.headers || []).map((h) => {
+      const cfg = configHeaders.find((c) => c.key.toLowerCase() === h.key.toLowerCase());
+      return cfg ? { ...h, value: cfg.value } : h;
+    });
+    configHeaders.forEach((c) => {
+      if (!mergedHeaders.find((h) => h.key.toLowerCase() === c.key.toLowerCase())) {
+        mergedHeaders.push({ key: c.key, value: c.value });
+      }
+    });
     renderKvFields('headerFields', mergedHeaders, true);
 
     // params

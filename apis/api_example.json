@@ -1,0 +1,85 @@
+{
+  "group": "example",
+  "description": "",
+  "endpoints": [
+    {
+      "id": "get-api-example",
+      "method": "GET",
+      "path": "/api/example",
+      "summary": "API 예제입니다. GET",
+      "description": "API 예제입니다. GET 방식",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "bb",
+          "required": false,
+          "description": ""
+        },
+        {
+          "key": "Accept",
+          "value": "application/json",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "params": [
+        {
+          "key": "test_no",
+          "value": "1",
+          "required": false,
+          "encode": false,
+          "description": "페이지 번호 입니다."
+        },
+        {
+          "key": "test_size",
+          "value": "100",
+          "required": false,
+          "encode": false,
+          "description": "perPage."
+        }
+      ],
+      "body": {
+        "test": "test_value"
+      },
+      "response": {
+        "status": 200,
+        "example": {
+          "status": true,
+          "message": "테스트 메시지",
+          "payload": {
+            "res_test": "hello world"
+          }
+        }
+      }
+    },
+    {
+      "id": "post-api-example",
+      "method": "POST",
+      "path": "/api/example",
+      "summary": "예제 API 테스트입니다.",
+      "description": "예제 API 테스트입니다.",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer {token}",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "params": [
+        {
+          "key": "key",
+          "value": "test",
+          "required": false,
+          "encode": true,
+          "description": ""
+        }
+      ],
+      "body": null,
+      "response": {
+        "status": 200,
+        "example": null
+      }
+    }
+  ]
+}
