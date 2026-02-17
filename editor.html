@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Editor — Local API Docs</title>
+  <link rel="stylesheet" href="public/css/pico.min.css" />
+  <link rel="stylesheet" href="public/lib/codemirror.min.css" />
+  <link rel="stylesheet" href="public/lib/codemirror-theme.min.css" />
+  <link rel="stylesheet" href="public/css/app.css" />
+  <link rel="stylesheet" href="public/css/editor.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner container-fluid">
+      <div class="header-left">
+        <a href="index.html" class="logo-link">
+          <strong class="logo">⚡ API Docs</strong>
+        </a>
+        <span class="header-sep">/</span>
+        <span id="editorTitle">New API</span>
+      </div>
+      <div class="header-right">
+        <span id="saveStatus" class="save-status"></span>
+        <button id="cancelBtn" class="outline secondary btn-sm">Cancel</button>
+        <button id="saveBtn" class="primary btn-sm">Save</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="editor-layout container-fluid">
+    <!-- Left: Form -->
+    <div class="editor-form">
+
+      <!-- Group / File -->
+      <div class="editor-section">
+        <h4 class="editor-section-title">API Group</h4>
+        <div class="grid">
+          <div>
+            <label for="groupName">Group Name <span class="required-badge">Required</span></label>
+            <input type="text" id="groupName" placeholder="예: Users, Auth, Products" />
+          </div>
+          <div>
+            <label for="fileName">File Name <span class="required-badge">Required</span></label>
+            <div class="input-suffix">
+              <input type="text" id="fileName" placeholder="users" />
+              <span class="suffix">.json</span>
+            </div>
+            <small class="hint">apis/ 폴더에 저장될 파일명</small>
+          </div>
+        </div>
+        <label for="groupDesc">Group Description</label>
+        <input type="text" id="groupDesc" placeholder="그룹 설명 (선택)" />
+      </div>
+
+      <!-- Endpoint Info -->
+      <div class="editor-section">
+        <h4 class="editor-section-title">Endpoint</h4>
+        <div class="grid">
+          <div>
+            <label for="epMethod">Method <span class="required-badge">Required</span></label>
+            <select id="epMethod">
+              <option value="GET">GET</option>
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+              <option value="PATCH">PATCH</option>
+              <option value="DELETE">DELETE</option>
+            </select>
+          </div>
+          <div>
+            <label for="epPath">Path <span class="required-badge">Required</span></label>
+            <input type="text" id="epPath" placeholder="/api/users/:id" />
+          </div>
+        </div>
+        <div class="grid">
+          <div>
+            <label for="epSummary">Summary</label>
+            <input type="text" id="epSummary" placeholder="간단한 API 설명" />
+          </div>
+        </div>
+        <label for="epDescription">Description</label>
+        <textarea id="epDescription" rows="2" placeholder="자세한 설명 (선택)"></textarea>
+      </div>
+
+      <!-- Request Headers -->
+      <div class="editor-section">
+        <div class="section-header">
+          <h4 class="editor-section-title">Request Headers</h4>
+          <button class="outline btn-xs" id="addEditorHeaderBtn">+ 추가</button>
+        </div>
+        <div id="editorHeaderFields"></div>
+      </div>
+
+      <!-- Query Params -->
+      <div class="editor-section">
+        <div class="section-header">
+          <h4 class="editor-section-title">Query Parameters</h4>
+          <button class="outline btn-xs" id="addEditorParamBtn">+ 추가</button>
+        </div>
+        <div class="kv-head">
+          <span>Key</span><span>Example Value</span><span>Required</span><span>Encode</span><span>Description</span><span></span>
+        </div>
+        <div id="editorParamFields"></div>
+      </div>
+
+      <!-- Request Body -->
+      <div class="editor-section">
+        <div class="section-header">
+          <h4 class="editor-section-title">Request Body <span class="badge">JSON</span></h4>
+          <div style="display:flex;gap:0.4rem;align-items:center">
+            <span id="editorJsonStatus" class="json-valid-status"></span>
+            <button class="outline btn-xs" id="formatEditorJsonBtn">Format</button>
+          </div>
+        </div>
+        <div id="editorBodyWrap" class="cm-editor-wrap"></div>
+      </div>
+
+      <!-- Response Example -->
+      <div class="editor-section">
+        <div class="section-header">
+          <h4 class="editor-section-title">Response Example</h4>
+          <div style="display:flex;gap:0.4rem;align-items:center">
+            <span id="editorResJsonStatus" class="json-valid-status"></span>
+            <button class="outline btn-xs" id="formatEditorResJsonBtn">Format</button>
+          </div>
+        </div>
+        <div class="grid" style="margin-bottom:0.5rem">
+          <div>
+            <label for="resStatus">Status Code</label>
+            <select id="resStatus">
+              <option value="200">200 OK</option>
+              <option value="201">201 Created</option>
+              <option value="204">204 No Content</option>
+              <option value="400">400 Bad Request</option>
+              <option value="401">401 Unauthorized</option>
+              <option value="403">403 Forbidden</option>
+              <option value="404">404 Not Found</option>
+              <option value="409">409 Conflict</option>
+              <option value="422">422 Unprocessable Entity</option>
+              <option value="500">500 Internal Server Error</option>
+            </select>
+          </div>
+        </div>
+        <div id="editorResWrap" class="cm-editor-wrap"></div>
+      </div>
+
+    </div>
+
+    <!-- Right: Live Preview -->
+    <div class="editor-preview">
+      <div class="preview-header">
+        <strong>Preview</strong>
+      </div>
+      <div id="previewArea" class="preview-area">
+        <p class="preview-placeholder">작성하면 여기에 미리보기가 표시됩니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Dialog -->
+  <dialog id="deleteDialog">
+    <article style="max-width:400px">
+      <header>
+        <h3>⚠ 삭제 확인</h3>
+      </header>
+      <p>이 엔드포인트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+      <footer>
+        <button id="confirmDeleteBtn" class="primary" style="background:#e74c3c;border-color:#e74c3c">삭제</button>
+        <button id="cancelDeleteBtn" class="secondary outline">취소</button>
+      </footer>
+    </article>
+  </dialog>
+
+  <script src="public/lib/codemirror.min.js"></script>
+  <script src="public/lib/codemirror-json.min.js"></script>
+  <script src="public/js/editor.js"></script>
+</body>
+</html>
