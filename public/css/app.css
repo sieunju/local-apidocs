@@ -49,30 +49,6 @@ body {
   margin: 0;
 }
 
-/* ===== API Test Toggle ===== */
-.api-test-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  cursor: pointer;
-  margin: 0;
-}
-
-.api-test-toggle input[type="checkbox"] {
-  margin: 0;
-  width: 2.4rem;
-  height: 1.3rem;
-}
-
-.toggle-label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  white-space: nowrap;
-  color: var(--muted-color);
-}
-
-#apiTestToggle:checked ~ .toggle-label { color: #49cc90; }
-
 .server-status {
   font-size: 0.75rem;
   padding: 0.2rem 0.5rem;

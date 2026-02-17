@@ -40,7 +40,6 @@
 
   // ── 상태 ──────────────────────────────────────────
   let allGroups = [];
-  let apiTestEnabled = false;
   let currentEndpoint = null;
   let serverPort = 3000;
   let targetHost = '';
@@ -58,6 +57,7 @@
     renderSidebar();
     bindEvents();
     checkUrlHash();
+    checkServerHealth();
   }
 
   function showFileProtocolWarning() {
@@ -278,9 +278,7 @@
         </div>`;
     }
 
-    const tryItBtn = `<button class="outline btn-xs" id="tryItBtn" ${apiTestEnabled ? '' : 'disabled title="API Test를 켜주세요"'}>
-      ▶ Try it out
-    </button>`;
+    const tryItBtn = `<button class="outline btn-xs" id="tryItBtn">▶ Try it out</button>`;
 
     view.innerHTML = `
       <div class="endpoint-header">
@@ -620,30 +618,6 @@
       renderSidebar(e.target.value);
     });
 
-    // API Test 토글
-    const toggle = document.getElementById('apiTestToggle');
-    const toggleLabel = document.getElementById('toggleLabel');
-    const serverStatus = document.getElementById('serverStatus');
-
-    toggle.addEventListener('change', async () => {
-      apiTestEnabled = toggle.checked;
-      toggleLabel.textContent = apiTestEnabled ? 'API Test ON' : 'API Test OFF';
-
-      if (apiTestEnabled) {
-        serverStatus.textContent = `서버 시작 중... (port ${serverPort})`;
-        serverStatus.classList.remove('hidden');
-        // server.js 는 별도 실행이지만, 상태 확인
-        await checkServerHealth();
-      } else {
-        serverStatus.classList.add('hidden');
-      }
-
-      // 현재 엔드포인트 재렌더링 (Try it out 버튼 활성화 상태 반영)
-      if (currentEndpoint) {
-        renderEndpointView(currentEndpoint.group, currentEndpoint.ep);
-      }
-    });
-
     // CodeMirror 초기화 (RequestBody 에디터)
     bodyEditor = CodeMirror(document.getElementById('bodyEditorWrap'), {
       mode: { name: 'javascript', json: true },
@@ -703,6 +677,7 @@
 
   async function checkServerHealth() {
     const serverStatus = document.getElementById('serverStatus');
+    serverStatus.classList.remove('hidden');
     try {
       const res = await fetch('/health', { signal: AbortSignal.timeout(3000) });
       if (res.ok) {
@@ -710,7 +685,7 @@
         return true;
       }
     } catch (_) {}
-    serverStatus.textContent = `⚠ 서버 미연결 — 아래 명령어로 실행하세요: node server.js`;
+    serverStatus.textContent = `⚠ 서버 미연결 — node server.js`;
     return false;
   }
 
