@@ -1,3 +1,9 @@
+/* ===== Form Inputs ===== */
+select {
+  background-color: #ffffff !important;
+  color: #333333 !important;
+}
+
 /* ===== Editor Layout ===== */
 .editor-layout {
   display: grid;
