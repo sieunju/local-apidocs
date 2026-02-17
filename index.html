@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Local API Docs</title>
+  <link rel="stylesheet" href="public/css/pico.min.css" />
+  <link rel="stylesheet" href="public/lib/codemirror.min.css" />
+  <link rel="stylesheet" href="public/lib/codemirror-theme.min.css" />
+  <link rel="stylesheet" href="public/lib/json-formatter.min.css" />
+  <link rel="stylesheet" href="public/css/app.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner container-fluid">
+      <div class="header-left">
+        <strong class="logo">⚡ API Docs</strong>
+      </div>
+      <div class="header-right">
+        <a href="editor.html" role="button" class="outline secondary btn-sm">+ New API</a>
+        <label class="api-test-toggle" title="API 테스트 ON/OFF">
+          <input type="checkbox" id="apiTestToggle" role="switch" />
+          <span class="toggle-label" id="toggleLabel">API Test OFF</span>
+        </label>
+        <span id="serverStatus" class="server-status hidden"></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-layout container-fluid">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-search">
+        <input type="search" id="searchInput" placeholder="API 검색..." />
+      </div>
+      <nav id="sidebarNav" class="sidebar-nav">
+        <p class="sidebar-loading">로딩 중...</p>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+      <div class="welcome-screen" id="welcomeScreen">
+        <hgroup>
+          <h2>Local API Docs</h2>
+          <p>좌측 사이드바에서 API를 선택하거나, <a href="editor.html">새 API를 추가</a>하세요.</p>
+        </hgroup>
+        <div class="welcome-tip">
+          <p><kbd>API Test OFF</kbd> 토글을 켜면 실제 요청을 테스트할 수 있습니다.</p>
+        </div>
+      </div>
+
+      <!-- 문서 + 테스트 패널 2단 -->
+      <div class="doc-test-layout hidden" id="docTestLayout">
+
+        <!-- 좌: 문서 뷰 -->
+        <div class="endpoint-view" id="endpointView"></div>
+
+        <!-- 우: 테스트 패널 Drawer -->
+        <div class="try-panel" id="tryPanel">
+          <div class="try-panel-inner">
+
+            <div class="try-panel-header">
+              <div>
+                <strong>Try it out</strong><br>
+                <span id="tryPanelEndpoint" style="font-size:0.78rem;color:var(--muted-color)"></span>
+              </div>
+              <button class="remove-row-btn" id="closeTryPanel" title="닫기">✕</button>
+            </div>
+
+            <!-- Base URL -->
+            <div class="form-section">
+              <label><strong>Base URL</strong></label>
+              <input type="text" id="baseUrl" placeholder="https://api.example.com" />
+            </div>
+
+            <!-- Headers -->
+            <div class="form-section">
+              <div class="section-header">
+                <strong>Headers</strong>
+                <button class="outline btn-xs" id="addHeaderBtn">+ 추가</button>
+              </div>
+              <div id="headerFields"></div>
+            </div>
+
+            <!-- Query Params -->
+            <div class="form-section" id="paramsSection">
+              <div class="section-header">
+                <strong>Query Parameters</strong>
+                <button class="outline btn-xs" id="addParamBtn">+ 추가</button>
+              </div>
+              <div id="paramFields"></div>
+            </div>
+
+            <!-- Request Body -->
+            <div class="form-section" id="bodySection">
+              <div class="section-header">
+                <strong>Request Body</strong>
+                <div style="display:flex;align-items:center;gap:0.4rem">
+                  <span class="badge">JSON</span>
+                  <button class="outline btn-xs" id="formatJsonBtn">Format</button>
+                  <span id="jsonValidStatus" class="json-valid-status"></span>
+                </div>
+              </div>
+              <div id="bodyEditorWrap" class="cm-editor-wrap"></div>
+            </div>
+
+            <!-- Send -->
+            <button id="sendRequestBtn" class="primary" style="width:100%">Send Request</button>
+
+            <!-- Response -->
+            <div class="form-section" id="responseSection" style="display:none;margin-top:1rem">
+              <div class="section-header">
+                <strong>Response</strong>
+                <span id="responseStatus" class="response-status-badge"></span>
+              </div>
+              <div id="responseBody" class="response-body-viewer"></div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Drawer backdrop -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <script src="public/lib/codemirror.min.js"></script>
+  <script src="public/lib/codemirror-json.min.js"></script>
+  <script src="public/lib/json-formatter.umd.js"></script>
+  <script src="public/js/app.js"></script>
+</body>
+</html>
