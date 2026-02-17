@@ -212,6 +212,74 @@ function handleSaveApi(req, res) {
   });
 }
 
+// ── Config 조회 ───────────────────────────────────
+// local.env 에서 CONFIG_HEADERS_* 형태로 저장된 공통 헤더를 반환
+function handleGetConfig(req, res) {
+  const envPath = path.join(__dirname, 'local.env');
+  let text = '';
+  try { text = fs.readFileSync(envPath, 'utf8'); } catch (_) {}
+
+  const headers = [];
+  const re = /^CONFIG_HEADER_(\d+)_KEY\s*=\s*(.+)/m;
+  // 전체 파싱: CONFIG_HEADER_{n}_KEY / CONFIG_HEADER_{n}_VALUE
+  const keyMatches = [...text.matchAll(/^CONFIG_HEADER_(\d+)_KEY\s*=\s*(.+)/gm)];
+  for (const m of keyMatches) {
+    const idx = m[1];
+    const key = m[2].trim();
+    const valMatch = text.match(new RegExp(`^CONFIG_HEADER_${idx}_VALUE\\s*=\\s*(.+)`, 'm'));
+    const value = valMatch ? valMatch[1].trim() : '';
+    headers.push({ key, value });
+  }
+
+  res.writeHead(200, corsHeaders({ 'Content-Type': 'application/json' }));
+  res.end(JSON.stringify({ headers }));
+}
+
+// ── Config 저장 ───────────────────────────────────
+// local.env 에서 기존 CONFIG_HEADER_* 라인을 지우고 새로 기록
+function handleSaveConfig(req, res) {
+  let raw = '';
+  req.on('data', (c) => { raw += c; });
+  req.on('end', () => {
+    let payload;
+    try { payload = JSON.parse(raw); } catch (_) {
+      res.writeHead(400, corsHeaders({ 'Content-Type': 'application/json' }));
+      res.end(JSON.stringify({ error: 'Invalid JSON' }));
+      return;
+    }
+
+    const { headers = [] } = payload;
+    const envPath = path.join(__dirname, 'local.env');
+    let text = '';
+    try { text = fs.readFileSync(envPath, 'utf8'); } catch (_) {}
+
+    // 기존 CONFIG_HEADER_* 라인 제거
+    const cleaned = text
+      .split('\n')
+      .filter((l) => !/^CONFIG_HEADER_\d+_(KEY|VALUE)\s*=/.test(l.trim()))
+      .join('\n')
+      .trimEnd();
+
+    // 새 항목 추가
+    const newLines = headers
+      .filter((h) => h.key && h.key.trim())
+      .map((h, i) => `CONFIG_HEADER_${i}_KEY=${h.key.trim()}\nCONFIG_HEADER_${i}_VALUE=${h.value || ''}`)
+      .join('\n');
+
+    const result = cleaned + (newLines ? '\n' + newLines : '') + '\n';
+
+    fs.writeFile(envPath, result, 'utf8', (err) => {
+      if (err) {
+        res.writeHead(500, corsHeaders({ 'Content-Type': 'application/json' }));
+        res.end(JSON.stringify({ error: err.message }));
+        return;
+      }
+      res.writeHead(200, corsHeaders({ 'Content-Type': 'application/json' }));
+      res.end(JSON.stringify({ ok: true }));
+    });
+  });
+}
+
 // ── index.json 업데이트 ───────────────────────────
 function handleUpdateIndex(req, res) {
   let raw = '';
@@ -291,6 +359,18 @@ const server = http.createServer((req, res) => {
   // index.json 업데이트
   if (pathname === '/update-index' && req.method === 'POST') {
     handleUpdateIndex(req, res);
+    return;
+  }
+
+  // Config 조회
+  if (pathname === '/get-config' && req.method === 'GET') {
+    handleGetConfig(req, res);
+    return;
+  }
+
+  // Config 저장
+  if (pathname === '/save-config' && req.method === 'POST') {
+    handleSaveConfig(req, res);
     return;
   }
 

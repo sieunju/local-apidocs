@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Config — Local API Docs</title>
+  <link rel="stylesheet" href="public/css/pico.min.css" />
+  <link rel="stylesheet" href="public/css/app.css" />
+  <link rel="stylesheet" href="public/css/config.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner container-fluid">
+      <div class="header-left">
+        <a href="index.html" class="logo-link"><strong class="logo">⚡ API Docs</strong></a>
+      </div>
+      <div class="header-right">
+        <span id="saveStatus" class="save-status"></span>
+        <button id="saveBtn" class="btn-sm">저장</button>
+        <a href="index.html" role="button" class="outline secondary btn-sm">← 뒤로</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="config-layout container-fluid">
+    <div class="config-inner">
+
+      <hgroup>
+        <h2>Config</h2>
+        <p>API 테스트 시 모든 요청에 자동으로 포함되는 공통 헤더를 설정합니다.<br>
+          값은 <code>local.env</code> 파일에 저장되며 git에 커밋되지 않습니다.</p>
+      </hgroup>
+
+      <!-- 공통 Request Headers -->
+      <section class="config-section">
+        <div class="config-section-header">
+          <h4>공통 Request Headers</h4>
+          <button id="addHeaderBtn" class="outline btn-sm">+ 추가</button>
+        </div>
+        <p class="config-hint">Authorization, Cookie 등 모든 API 호출에 공통으로 사용하는 헤더를 입력하세요.</p>
+
+        <div class="config-kv-head">
+          <span>Key</span>
+          <span>Value</span>
+        </div>
+        <div id="headerList"></div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="public/js/config.js"></script>
+</body>
+</html>

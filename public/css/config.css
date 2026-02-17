@@ -1,0 +1,116 @@
+/* ===== Config Layout ===== */
+.config-layout {
+  padding: 2rem 1.5rem;
+}
+
+.config-inner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.config-inner hgroup {
+  margin-bottom: 2rem;
+}
+
+.config-inner hgroup h2 {
+  margin-bottom: 0.25rem;
+}
+
+.config-inner hgroup p {
+  color: var(--muted-color);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+/* ===== Section ===== */
+.config-section {
+  background: var(--card-background-color, #fff);
+  border: 1px solid var(--table-border-color);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.config-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.config-section-header h4 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.config-hint {
+  font-size: 0.8rem;
+  color: var(--muted-color);
+  margin: 0 0 1rem;
+}
+
+/* ===== KV 행 ===== */
+.config-kv-head {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2rem;
+  gap: 0.5rem;
+  padding: 0 0 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--muted-color);
+  letter-spacing: 0.04em;
+}
+
+.config-kv-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2rem;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+
+.config-kv-row input {
+  margin: 0;
+  background-color: #ffffff !important;
+  color: #333333 !important;
+  font-size: 0.85rem;
+}
+
+.config-kv-row .remove-row-btn {
+  padding: 0.2rem 0.4rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  background: none;
+  border: 1px solid var(--table-border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--muted-color);
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.config-kv-row .remove-row-btn:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+/* ===== Save Status ===== */
+.save-status {
+  font-size: 0.8rem;
+  color: var(--muted-color);
+  margin-right: 0.5rem;
+}
+
+.save-status.success { color: #16a34a; }
+.save-status.error   { color: #dc2626; }
+
+/* ===== Logo Link ===== */
+.logo-link {
+  text-decoration: none;
+  color: inherit;
+}

@@ -44,6 +44,7 @@
   let serverPort = 3000;
   let targetHost = '';
   let bodyEditor = null; // CodeMirror 인스턴스
+  let configHeaders = []; // /get-config 에서 로드한 공통 헤더
 
   // ── 초기화 ────────────────────────────────────────
   async function init() {
@@ -53,6 +54,7 @@
       return;
     }
     await loadEnvConfig();
+    await loadConfigHeaders();
     await loadApiGroups();
     renderSidebar();
     bindEvents();
@@ -86,6 +88,16 @@
       const hostMatch = text.match(/^HOST\s*=\s*(.+)/m);
       if (hostMatch) targetHost = hostMatch[1].trim().replace(/\/$/, '');
     } catch (_) { /* local.env 없으면 기본값 사용 */ }
+  }
+
+  async function loadConfigHeaders() {
+    try {
+      const res = await fetch('/get-config?' + Date.now());
+      if (res.ok) {
+        const data = await res.json();
+        configHeaders = (data.headers || []).filter((h) => h.key);
+      }
+    } catch (_) {}
   }
 
   // ── API 목록 로드 ─────────────────────────────────
@@ -315,8 +327,13 @@
     // base url
     document.getElementById('baseUrl').value = targetHost || `http://localhost:${serverPort}`;
 
-    // headers
-    renderKvFields('headerFields', ep.headers || [], true);
+    // headers: config 공통 헤더 + endpoint 헤더 병합 (endpoint 헤더가 우선)
+    const epHeaderKeys = (ep.headers || []).map((h) => h.key.toLowerCase());
+    const mergedHeaders = [
+      ...configHeaders.filter((h) => !epHeaderKeys.includes(h.key.toLowerCase())),
+      ...(ep.headers || []),
+    ];
+    renderKvFields('headerFields', mergedHeaders, true);
 
     // params
     const paramsSection = document.getElementById('paramsSection');
